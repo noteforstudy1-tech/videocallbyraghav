@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Pro | Raghav Parashar</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --red: #ef4444;
+            --green: #22c55e;
+            --yellow: #eab308;
+            --blue: #3b82f6;
+            --white: #f8fafc;
+            --accent: #38bdf8;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .made-by {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        h1 {
+            color: var(--accent);
+            margin: 0;
+            font-weight: 800;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .ludo-container {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            background: #334155;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            border: 10px solid #1e293b;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Home Squares */
+        .home { width: 100%; height: 100%; border: 1px solid #000; }
+        .red-home { grid-column: 1/7; grid-row: 1/7; background: var(--red); }
+        .green-home { grid-column: 10/16; grid-row: 1/7; background: var(--green); }
+        .blue-home { grid-column: 1/7; grid-row: 10/16; background: var(--blue); }
+        .yellow-home { grid-column: 10/16; grid-row: 10/16; background: var(--yellow); }
+
+        .inner-home {
+            width: 70%;
+            height: 70%;
+            background: white;
+            margin: 15%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .piece-slot {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px dashed #ccc;
+        }
+
+        /* Tracks */
+        .cell {
+            background: white;
+            border: 0.5px solid #cbd5e1;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .red-path { background: #fee2e2; }
+        .green-path { background: #dcfce7; }
+        .blue-path { background: #dbeafe; }
+        .yellow-path { background: #fef9c3; }
+
+        .center {
+            grid-column: 7/10;
+            grid-row: 7/10;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .dice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dice {
+            width: 60px;
+            height: 60px;
+            background: white;
+            color: black;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .dice:active { transform: scale(0.9); }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: var(--accent);
+            color: var(--bg-color);
+            transition: all 0.2s;
+        }
+
+        button:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        .status {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            height: 1.5rem;
+        }
+
+        /* Multiplayer */
+        .room-controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #roomID {
+            background: rgba(139, 92, 246, 0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--multi-color);
+            display: none;
+            border: 1px solid #8b5cf6;
+        }
+
+        @media (max-width: 500px) {
+            .ludo-container { width: 350px; height: 350px; border-width: 5px; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="made-by">Made by Raghav Parashar</div>
+    <h1>Ludo Multiplayer</h1>
+
+    <div class="status" id="status">Waiting for game...</div>
+    <div id="roomID">ROOM: ----</div>
+
+    <div class="ludo-container" id="board">
+        <!-- Board structure built by JS -->
+    </div>
+
+    <div class="controls">
+        <div class="dice-container">
+            <div class="dice" id="dice" onclick="rollDice()">🎲</div>
+            <span id="diceVal">?</span>
+        </div>
+        <button onclick="resetGame()">Reset</button>
+        <button id="musicToggle" onclick="toggleMusic()">🎵 Music</button>
+    </div>
+
+    <div class="room-controls">
+        <button onclick="createRoom()">Create Room</button>
+        <button onclick="joinRoom()">Join Room</button>
+    </div>
+
+    <audio id="bgMusic" loop src="musicforludo.mp3"></audio>
+
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script>
+        const board = document.getElementById('board');
+        const status = document.getElementById('status');
+        const dice = document.getElementById('dice');
+        const bgMusic = document.getElementById('bgMusic');
+        
+        let currentPlayer = 'red';
+        let diceValue = 0;
+        let musicOn = false;
+        let peer = null, conn = null, myNum = null;
+
+        function toggleMusic() {
+            musicOn = !musicOn;
+            if (musicOn) bgMusic.play();
+            else bgMusic.pause();
+        }
+
+        function rollDice() {
+            if (conn && currentPlayer !== (myNum === 1 ? 'red' : 'green')) return;
+            diceValue = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('diceVal').innerText = diceValue;
+            status.innerText = currentPlayer.toUpperCase() + " rolled a " + diceValue;
+            
+            if (conn) conn.send({ type: 'roll', value: diceValue });
+            
+            // Logic to move pieces would go here
+            setTimeout(() => {
+                currentPlayer = currentPlayer === 'red' ? 'green' : 'red';
+                status.innerText = currentPlayer.toUpperCase() + "'s Turn";
+            }, 1000);
+        }
+
+        function createRoom() {
+            const id = "ludo-" + Math.floor(1000 + Math.random() * 9000);
+            peer = new Peer(id);
+            myNum = 1;
+            peer.on('open', (id) => {
+                document.getElementById('roomID').innerText = "ROOM ID: " + id.split('-')[1];
+                document.getElementById('roomID').style.display = 'block';
+                status.innerText = "Waiting for Player 2...";
+            });
+            peer.on('connection', (c) => {
+                conn = c;
+                setupConn();
+            });
+        }
+
+        function joinRoom() {
+            const id = prompt("Enter Room ID:");
+            if (!id) return;
+            peer = new Peer();
+            myNum = 2;
+            peer.on('open', () => {
+                conn = peer.connect("ludo-" + id);
+                setupConn();
+            });
+        }
+
+        function setupConn() {
+            conn.on('open', () => {
+                status.innerText = "Connected! Start Playing.";
+            });
+            conn.on('data', (data) => {
+                if (data.type === 'roll') {
+                    diceValue = data.value;
+                    document.getElementById('diceVal').innerText = diceValue;
+                    currentPlayer = currentPlayer === 'red' ? 'green' : 'red';
+                    status.innerText = currentPlayer.toUpperCase() + "'s Turn";
+                }
+            });
+        }
+
+        // --- Board UI Generator ---
+        function initBoard() {
+            board.innerHTML = '';
+            // 225 cells for 15x15
+            for (let i = 0; i < 225; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                const r = Math.floor(i / 15);
+                const c = i % 15;
+
+                // Homes
+                if (r < 6 && c < 6) cell.classList.add('red-home');
+                else if (r < 6 && c > 8) cell.classList.add('green-home');
+                else if (r > 8 && c < 6) cell.classList.add('blue-home');
+                else if (r > 8 && c > 8) cell.classList.add('yellow-home');
+                
+                // Paths
+                if (r === 7 && c < 7) cell.classList.add('red-path');
+                if (r === 7 && c > 7) cell.classList.add('yellow-path');
+                if (c === 7 && r < 7) cell.classList.add('green-path');
+                if (c === 7 && r > 7) cell.classList.add('blue-path');
+                
+                if (r >= 6 && r <= 8 && c >= 6 && c <= 8) {
+                   if (r === 7 && c === 7) cell.innerText = "FINISH";
+                }
+
+                board.appendChild(cell);
+            }
+        }
+
+        initBoard();
+        status.innerText = "RED's Turn";
+    </script>
+</body>
+</html>
