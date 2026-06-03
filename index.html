@@ -50,6 +50,7 @@
             height: 100%;
             object-fit: cover;
             background: #000;
+            image-rendering: -webkit-optimize-contrast;
         }
 
         #local-video {
@@ -65,6 +66,7 @@
             z-index: 10;
             background: #222;
             transform: scaleX(-1); /* Mirror effect */
+            image-rendering: -webkit-optimize-contrast;
         }
 
         /* Setup Panel */
@@ -428,8 +430,15 @@
 
         async function initializePeer() {
             try {
-                showStatus('Requesting camera & microphone...');
-                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                showStatus('Requesting HD camera & microphone...');
+                localStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: {
+                        width: { min: 640, ideal: 1280, max: 1920 },
+                        height: { min: 480, ideal: 720, max: 1080 },
+                        frameRate: { ideal: 30, max: 60 }
+                    }, 
+                    audio: true 
+                });
                 localVideo.srcObject = localStream;
                 
                 showStatus('Initializing PeerJS...');
