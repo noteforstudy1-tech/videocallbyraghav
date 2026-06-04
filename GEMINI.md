@@ -14,9 +14,16 @@ This directory is the primary workspace for Raghav Parashar's Video Call Hub.
 3. **Media Controls:** 
    - Toggle microphone (Mute/Unmute).
    - Toggle camera (On/Off).
+   - **Screen Sharing:** Share your screen with the remote peer.
    - End Call (Reset session).
 4. **Room System:** Generate a unique Room ID or join an existing one.
-5. **Picture-in-Picture:** Local self-view in a floating corner window.
+5. **Call Modes:** 
+   - **Video Call:** Full audio/video session.
+   - **Audio Only:** Join with microphone only.
+   - **Chat Only:** Text-based interaction without media.
+6. **Pre-call Configuration:** Toggle Mic/Camera *before* joining a call.
+7. **File Sharing:** Send and receive files via the integrated chat.
+8. **Draggable PiP:** Move the local self-view window anywhere on the screen.
 
 ## Technical Notes
 - **Hosting:** Designed for GitHub Pages.
@@ -29,6 +36,13 @@ This directory is the primary workspace for Raghav Parashar's Video Call Hub.
   - Built Video Call Hub from scratch.
   - Implemented WebRTC stream handling and PeerJS signaling.
   - Added responsive UI and media toggle controls.
+- **2026-06-04:**
+  - Added Screen Sharing (getDisplayMedia).
+  - Added File Sharing (PeerJS Data Connection + ArrayBuffer).
+  - Implemented Pre-call Mic/Video toggles.
+  - Added specialized Call Modes (Video, Audio, Chat).
+  - Made local video PiP draggable (Mouse/Touch events).
+  - Refined UI for file attachments and mode selection.
 
 ---
 *Managed by Gemini CLI - Raghav's Personal Co-pilot*
